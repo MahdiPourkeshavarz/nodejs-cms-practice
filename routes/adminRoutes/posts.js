@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const postSchema = require("../../models/Post.js");
+const Post = require("../../models/Post.js");
 
 router.all("/*", (req, res, next) => {
   req.app.locals.layout = "admin";
@@ -54,7 +55,36 @@ router.post("/create", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  res.render("admin/posts");
+  const posts = await Post.find({});
+  if (posts) {
+    res.render("admin/posts", { posts: posts });
+  }
+});
+
+router.get("/edit/:id", async (req, res) => {
+  const id = req.params.id;
+  const post = await Post.findOne({ _id: id });
+  res.render("admin/posts/edit", { post: post });
+});
+
+router.post("/update/:id", async (req, res) => {
+  try {
+    const { title, status, allowComments, body } = req.body;
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        status,
+        allowComments: allowComments === "on",
+        body,
+      },
+      { new: true }
+    );
+    res.redirect("/admin/posts");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating post");
+  }
 });
 
 module.exports = router;

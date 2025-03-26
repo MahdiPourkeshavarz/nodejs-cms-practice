@@ -1,181 +1,160 @@
-<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Manage Posts</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    .status-draft { color: #ffc107; font-weight: bold; }
-    .status-published { color: #28a745; font-weight: bold; }
-  </style>
-</head>
-<body>
-  {{> admin/navbar }}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin - Manage Posts</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      .status-public { color: #28a745; font-weight: bold; } .status-private {
+      color: #6c757d; font-weight: bold; } .status-draft { color: #ffc107;
+      font-weight: bold; } .action-btns { white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div class="container mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Posts</h1>
+        <a href="/admin/posts/create" class="btn btn-primary">+ New Post</a>
+      </div>
 
-  <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1>Manage Posts</h1>
-      <a href="/admin/posts/create" class="btn btn-primary">+ New Post</a>
-    </div>
-
-    <div class="card mb-4">
-      <div class="card-body">
-        <form action="/admin/posts" method="GET">
-          <div class="row">
-            <div class="col-md-6">
-              <input
-                type="text"
-                name="search"
-                class="form-control"
-                placeholder="Search posts..."
-                value="{{searchQuery}}"
-              >
-            </div>
-            <div class="col-md-4">
-              <select name="status" class="form-select">
-                <option value="">All Statuses</option>
-                <option value="draft" {{#if (eq selectedStatus "draft")}}selected{{/if}}>Draft</option>
-                <option value="published" {{#if (eq selectedStatus "published")}}selected{{/if}}>Published</option>
-              </select>
-            </div>
-            <div class="col-md-2">
-              <button type="submit" class="btn btn-secondary w-100">Filter</button>
-            </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Comments</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each posts}}
+                  <tr>
+                    <td>{{this.title}}</td>
+                    <td>
+                      <span class="status-{{this.status}}">
+                        {{#if (eq this.status "public")}}
+                          <i class="fas fa-globe"></i>
+                          Public
+                        {{else if (eq this.status "private")}}
+                          <i class="fas fa-lock"></i>
+                          Private
+                        {{else}}
+                          <i class="fas fa-edit"></i>
+                          Draft
+                        {{/if}}
+                      </span>
+                    </td>
+                    <td>
+                      {{#if this.allowComments}}
+                        <span class="badge bg-success"><i
+                            class="fas fa-check"
+                          ></i>
+                          Allowed</span>
+                      {{else}}
+                        <span class="badge bg-secondary"><i
+                            class="fas fa-times"
+                          ></i>
+                          Disabled</span>
+                      {{/if}}
+                    </td>
+                    <td class="action-btns">
+                      <a
+                        href="/admin/posts/edit/{{this._id}}"
+                        class="btn btn-sm btn-outline-primary"
+                      >
+                        <i class="fas fa-edit"></i>
+                        Edit
+                      </a>
+                      <button
+                        class="btn btn-sm btn-outline-danger delete-post"
+                        data-id="{{this._id}}"
+                      >
+                        <i class="fas fa-trash"></i>
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                {{else}}
+                  <tr>
+                    <td colspan="4" class="text-center text-muted py-4">
+                      No posts found.
+                      <a href="/admin/posts/create">Create your first post?</a>
+                    </td>
+                  </tr>
+                {{/each}}
+              </tbody>
+            </table>
           </div>
-        </form>
-      </div>
-    </div>
-
-    {{! Posts Table }}
-    <div class="card">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Status</th>
-                <th>Comments</th>
-                <th>Last Updated</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{#each posts}}
-                <tr>
-                  <td>
-                    <a href="/admin/posts/edit/{{this._id}}">{{this.title}}</a>
-                  </td>
-                  <td>
-                    <span class="status-{{this.status}}">
-                      {{capitalize this.status}}
-                    </span>
-                  </td>
-                  <td>
-                    {{#if this.allowComments}}
-                      <span class="badge bg-success">Enabled</span>
-                    {{else}}
-                      <span class="badge bg-secondary">Disabled</span>
-                    {{/if}}
-                  </td>
-                  <td>{{formatDate this.updatedAt}}</td>
-                  <td>
-                    <a
-                      href="/admin/posts/edit/{{this._id}}"
-                      class="btn btn-sm btn-outline-primary"
-                    >
-                      Edit
-                    </a>
-                    <button
-                      class="btn btn-sm btn-outline-danger delete-post"
-                      data-id="{{this._id}}"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              {{else}}
-                <tr>
-                  <td colspan="5" class="text-center text-muted py-4">
-                    No posts found. <a href="/admin/posts/create">Create one?</a>
-                  </td>
-                </tr>
-              {{/each}}
-            </tbody>
-          </table>
-        </div>
-
-        {{! Pagination (Optional) }}
-        {{#if pagination}}
-          <nav>
-            <ul class="pagination justify-content-center">
-              {{#if pagination.prev}}
-                <li class="page-item">
-                  <a class="page-link" href="?page={{pagination.prev}}&search={{searchQuery}}&status={{selectedStatus}}">Previous</a>
-                </li>
-              {{/if}}
-
-              {{#each pagination.pages}}
-                <li class="page-item {{#if active}}active{{/if}}">
-                  <a class="page-link" href="?page={{this}}&search={{searchQuery}}&status={{selectedStatus}}">{{this}}</a>
-                </li>
-              {{/each}}
-
-              {{#if pagination.next}}
-                <li class="page-item">
-                  <a class="page-link" href="?page={{pagination.next}}&search={{searchQuery}}&status={{selectedStatus}}">Next</a>
-                </li>
-              {{/if}}
-            </ul>
-          </nav>
-        {{/if}}
-      </div>
-    </div>
-  </div>
-
-  <div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Confirm Deletion</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          Are you sure you want to delete this post? This action cannot be undone.
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
         </div>
       </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.querySelectorAll('.delete-post').forEach(button => {
-      button.addEventListener('click', function() {
-        const postId = this.getAttribute('data-id');
-        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-        modal.show();
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Confirm Deletion</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete this post? This action cannot be
+              undone.</p>
+            <p class="fw-bold" id="postTitleToDelete"></p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >Cancel</button>
+            <button
+              type="button"
+              class="btn btn-danger"
+              id="confirmDelete"
+            >Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        document.getElementById('confirmDelete').onclick = () => {
-          fetch(`/admin/posts/${postId}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              window.location.reload();
-            } else {
-              alert('Error deleting post');
-            }
-          });
-        };
-      });
-    });
-  </script>
-</body>
+    <!-- Font Awesome for icons -->
+    <script
+      src="https://kit.fontawesome.com/your-code.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Bootstrap JS -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+
+    <script>
+      // Delete Post Functionality
+      document.querySelectorAll('.delete-post').forEach(button => {
+      button.addEventListener('click', function() { const postId =
+      this.getAttribute('data-id'); const postTitle =
+      this.closest('tr').querySelector('td:first-child').textContent;
+      document.getElementById('postTitleToDelete').textContent = `Post:
+      "${postTitle}"`; const deleteModal = new
+      bootstrap.Modal(document.getElementById('deleteModal'));
+      deleteModal.show(); document.getElementById('confirmDelete').onclick = ()
+      => { fetch(`/admin/posts/${postId}`, { method: 'DELETE', headers: {
+      'Content-Type': 'application/json', } }) .then(response =>
+      response.json()) .then(data => { if (data.success) {
+      window.location.reload(); } else { alert('Error: ' + (data.message ||
+      'Failed to delete post')); } }) .catch(error => { console.error('Error:',
+      error); alert('An error occurred while deleting the post'); });
+      deleteModal.hide(); }; }); });
+    </script>
+  </body>
 </html>
