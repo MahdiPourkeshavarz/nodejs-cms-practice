@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const { engine } = require("express-handlebars");
 const mongoose = require("mongoose");
+const methodOverride = require("method-override");
 const app = express();
 mongoose.Promise = global.Promise;
 
@@ -13,8 +14,14 @@ const posts = require("./routes/adminRoutes/posts.js");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(methodOverride("_method"));
 
-app.engine("handlebars", engine({ defaultLayout: "home" }));
+const { select } = require("./utils/handlebars.js");
+
+app.engine(
+  "handlebars",
+  engine({ defaultLayout: "home", helpers: { select } })
+);
 app.set("view engine", "handlebars");
 
 app.use("/", homeRoutes);
