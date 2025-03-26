@@ -67,7 +67,7 @@ router.get("/edit/:id", async (req, res) => {
   res.render("admin/posts/edit", { post: post });
 });
 
-router.post("/update/:id", async (req, res) => {
+router.put("/edit/:id", async (req, res) => {
   try {
     const { title, status, allowComments, body } = req.body;
     const updatedPost = await Post.findByIdAndUpdate(
@@ -80,10 +80,24 @@ router.post("/update/:id", async (req, res) => {
       },
       { new: true }
     );
-    res.redirect("/admin/posts");
+    if (updatedPost) {
+      res.status(200).send("post updated!");
+      res.redirect("/admin/posts");
+    }
   } catch (err) {
     console.error(err);
     res.status(500).send("Error updating post");
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const deletedPost = await Post.remove({ _id: id });
+    res.redirect("/admin/posts");
+  } catch (error) {
+    console.error(err);
+    res.status(500).send("Error deleting post");
   }
 });
 

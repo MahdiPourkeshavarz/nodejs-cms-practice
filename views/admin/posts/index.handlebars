@@ -148,7 +148,7 @@
       "${postTitle}"`; const deleteModal = new
       bootstrap.Modal(document.getElementById('deleteModal'));
       deleteModal.show(); document.getElementById('confirmDelete').onclick = ()
-      => { fetch(`/admin/posts/${postId}`, { method: 'DELETE', headers: {
+      => { fetch(`/admin/posts/delete/${postId}`, { method: 'DELETE', headers: {
       'Content-Type': 'application/json', } }) .then(response =>
       response.json()) .then(data => { if (data.success) {
       window.location.reload(); } else { alert('Error: ' + (data.message ||

@@ -32,7 +32,7 @@
 
     <div class="card form-container">
       <div class="card-body">
-        <form action="/admin/posts/update/{{post._id}}" method="POST">
+        <form action="/admin/posts/edit/{{post._id}}?_method=PUT" method="POST">
           <div class="mb-3">
             <label for="title" class="form-label">Post Title</label>
             <input
