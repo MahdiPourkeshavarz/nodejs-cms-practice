@@ -26,6 +26,7 @@
             <table class="table table-hover">
               <thead class="table-light">
                 <tr>
+                  <th>File</th>
                   <th>Title</th>
                   <th>Status</th>
                   <th>Comments</th>
@@ -35,6 +36,12 @@
               <tbody>
                 {{#each posts}}
                   <tr>
+                    <td><img
+                        src="/upload/{{this.file}}"
+                        alt="_"
+                        height="70"
+                        class="img-responsive"
+                      /></td>
                     <td>{{this.title}}</td>
                     <td>
                       <span class="status-{{this.status}}">

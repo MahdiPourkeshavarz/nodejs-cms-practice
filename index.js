@@ -4,12 +4,15 @@ const path = require("path");
 const { engine } = require("express-handlebars");
 const mongoose = require("mongoose");
 const methodOverride = require("method-override");
+const upload = require("express-fileupload");
 const app = express();
 mongoose.Promise = global.Promise;
 
 const homeRoutes = require("./routes/homeRoutes/index.js");
 const adminRoutes = require("./routes/adminRoutes/index.js");
 const posts = require("./routes/adminRoutes/posts.js");
+
+app.use(upload());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const postSchema = require("../../models/Post.js");
+const fs = require("fs");
+const path = require("path");
 const Post = require("../../models/Post.js");
-
+const { IsFileUploaded, uploadDir } = require("../../utils/index.js");
 router.all("/*", (req, res, next) => {
   req.app.locals.layout = "admin";
   next();
@@ -32,11 +33,24 @@ router.post("/create", async (req, res) => {
     });
   }
 
+  let file;
+  let fileName = "not uploaded";
+  if (IsFileUploaded(req.files)) {
+    file = req.files?.file;
+    fileName = `${Date.now()}-${file.name}`;
+    file.mv("../../public/uploads/" + fileName, (err) => {
+      console.log(err);
+    });
+  } else {
+    console.log("file not uploaded");
+  }
+
   const newPost = new Post({
     title,
     status,
     allowComments: Boolean(allowComments),
     body,
+    file: fileName,
   });
 
   try {
@@ -93,7 +107,11 @@ router.put("/edit/:id", async (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const deletedPost = await Post.remove({ _id: id });
+    const deletePost = await Post.fineOne({ _id: id });
+    fs.unlink(uploadDir + deletePost.file, (err) => {
+      console.log(err);
+    });
+    await deletePost.remove();
     res.redirect("/admin/posts");
   } catch (error) {
     console.error(err);
