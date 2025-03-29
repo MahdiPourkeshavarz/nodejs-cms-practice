@@ -20,9 +20,25 @@ router.get("/create", (req, res) => {
 router.post("/create", async (req, res) => {
   const { title, status, allowComments = false, body } = req.body;
 
+  let errors = [];
+
+  if (!title) {
+    errors.push({ message: "please add title" });
+  } else if (!status) {
+    errors.push({ message: "please add status" });
+  } else if (!body) {
+    errors.push({ message: "please add description for post" });
+  } else if (!req.files?.file) {
+    errors.push({ message: "please add image for post" });
+  } else if (errors.length > 0) {
+    res.render("admin/posts/create", {
+      errors,
+    });
+  }
+
   if (!title || !status || !body) {
     return res.status(400).json({
-      message: "Title, status, and body are required.",
+      message: "All fields are necessary for creating post!.",
     });
   }
 

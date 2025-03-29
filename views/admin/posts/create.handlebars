@@ -11,6 +11,9 @@
       action="/admin/post/create"
     >
       <div class="form-group">
+        {{#each errors}}
+          <div class="alert alert-danger">{{message}}</div>
+        {{/each}}
         <label for="title">Title</label>
         <input
           type="text"
