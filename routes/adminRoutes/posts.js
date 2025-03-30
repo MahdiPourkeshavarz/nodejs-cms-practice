@@ -99,6 +99,18 @@ router.get("/edit/:id", async (req, res) => {
 });
 
 router.put("/edit/:id", async (req, res) => {
+  let file;
+  let fileName = "not uploaded";
+  if (IsFileUploaded(req.files)) {
+    file = req.files?.file;
+    fileName = `${Date.now()}-${file.name}`;
+    file.mv("../../public/uploads/" + fileName, (err) => {
+      console.log(err);
+    });
+    req.flash("success-message", "post updated");
+  } else {
+    console.log("file not uploaded");
+  }
   try {
     const { title, status, allowComments, body } = req.body;
     const updatedPost = await Post.findByIdAndUpdate(
@@ -108,6 +120,7 @@ router.put("/edit/:id", async (req, res) => {
         status,
         allowComments: allowComments === "on",
         body,
+        file: fileName,
       },
       { new: true }
     );
@@ -129,6 +142,7 @@ router.delete("/delete/:id", async (req, res) => {
       console.log(err);
     });
     await deletePost.remove();
+    req.flash("success-message", "post deleted");
     res.redirect("/admin/posts");
   } catch (error) {
     console.error(err);

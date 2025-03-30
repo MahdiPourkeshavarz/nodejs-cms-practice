@@ -32,7 +32,7 @@
 
     <div class="card form-container">
       <div class="card-body">
-        <form action="/admin/posts/edit/{{post._id}}?_method=PUT" method="POST">
+        <form action="/admin/posts/edit/{{post._id}}?_method=PUT" method="POST" enctype="multipart/form-data">
           <div class="mb-3">
             <label for="title" class="form-label">Post Title</label>
             <input
@@ -55,6 +55,12 @@
                 <option value="draft">Draft</option>
                 {{/select}}
               </select>
+            </div>
+            <div class="row mb-3">
+              <div class="com-md-6 form-group">
+                <label for="file">image</label>
+                <input type="file" name="file" id="file" class="form-control">
+              </div>
             </div>
 
             <div class="col-md-6">
