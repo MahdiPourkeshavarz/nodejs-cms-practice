@@ -8,6 +8,7 @@ const upload = require("express-fileupload");
 const app = express();
 const session = require("express-session");
 const flash = require("connect-flash");
+const moment = require("moment");
 mongoose.Promise = global.Promise;
 
 const homeRoutes = require("./routes/homeRoutes/index.js");
@@ -21,11 +22,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(methodOverride("_method"));
 
-const { select } = require("./utils/handlebars.js");
+const { select, dateConverter } = require("./utils/handlebars.js");
 
 app.engine(
   "handlebars",
-  engine({ defaultLayout: "home", helpers: { select } })
+  engine({ defaultLayout: "home", helpers: { select, dateConverter } })
 );
 app.set("view engine", "handlebars");
 

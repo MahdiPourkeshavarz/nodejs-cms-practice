@@ -30,6 +30,7 @@
                   <th>File</th>
                   <th>Title</th>
                   <th>Status</th>
+                  <th>Date</th>
                   <th>Comments</th>
                   <th>Actions</th>
                 </tr>
@@ -58,6 +59,11 @@
                         {{/if}}
                       </span>
                     </td>
+                      {{#if this.date}}
+                    <td>
+                      <span>{{dateConverter this.date 'MMMM Do YYYY'}}</span>
+                    </td>
+                      {{/if}}
                     <td>
                       {{#if this.allowComments}}
                         <span class="badge bg-success"><i
