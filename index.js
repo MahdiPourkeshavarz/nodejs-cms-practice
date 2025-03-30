@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 const methodOverride = require("method-override");
 const upload = require("express-fileupload");
 const app = express();
+const session = require("express-session");
+const flash = require("connect-flash");
 mongoose.Promise = global.Promise;
 
 const homeRoutes = require("./routes/homeRoutes/index.js");
@@ -30,6 +32,21 @@ app.set("view engine", "handlebars");
 app.use("/", homeRoutes);
 app.use("/admin", adminRoutes);
 app.use("/admin/posts", posts);
+
+app.use(
+  session({
+    secret: "meiti",
+    resave: true,
+    saveUninitialized: true,
+  })
+);
+
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.successMessage = req.flash("success-message");
+  next();
+});
 
 mongoose
   .connect("mongodb://localhost:27017/cms")

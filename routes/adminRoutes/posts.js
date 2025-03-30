@@ -75,6 +75,7 @@ router.post("/create", async (req, res) => {
       message: "Post created successfully.",
       post: savedPost,
     });
+    req.flash("success-message", "post created successfully!");
     res.redirect("/admin");
   } catch (err) {
     console.error("Error saving post:", err);
