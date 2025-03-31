@@ -15,8 +15,14 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/about", (req, res) => {
-  res.render("home/about");
+router.get("/posts/:id", async (req, res) => {
+  const id = req.params.id;
+  try {
+    const post = await Post.findOne({ _id: id });
+    res.render("home/post", { post });
+  } catch (error) {
+    res.status(401).send("no post found");
+  }
 });
 
 router.get("/login", (req, res) => {
