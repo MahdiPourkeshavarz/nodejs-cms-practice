@@ -14,6 +14,7 @@ mongoose.Promise = global.Promise;
 const homeRoutes = require("./routes/homeRoutes/index.js");
 const adminRoutes = require("./routes/adminRoutes/index.js");
 const posts = require("./routes/adminRoutes/posts.js");
+const categories = require("./routes/adminRoutes/categories.js");
 
 app.use(upload());
 
@@ -33,6 +34,7 @@ app.set("view engine", "handlebars");
 app.use("/", homeRoutes);
 app.use("/admin", adminRoutes);
 app.use("/admin/posts", posts);
+app.use("/admin/categories", categories);
 
 app.use(
   session({
