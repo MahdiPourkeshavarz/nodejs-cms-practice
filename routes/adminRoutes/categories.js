@@ -8,7 +8,20 @@ router.all("/*", (req, res, next) => {
 });
 
 router.get("/", (req, res) => {
-  res.render("admin/categories/index");
+  const categories = Category.find({});
+  res.render("admin/categories/index", { categories });
+});
+
+router.post("/create", async (req, res) => {
+  const newCategory = Category({
+    name: req.body.name,
+  });
+  try {
+    await newCategory.save();
+    res.render("admin/categories/index");
+  } catch (err) {
+    res.status(400).send("could not save the category");
+  }
 });
 
 module.exports = router;
