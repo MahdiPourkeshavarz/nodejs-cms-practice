@@ -7,9 +7,13 @@ router.all("/*", (req, res, next) => {
   next();
 });
 
-router.get("/", (req, res) => {
-  const categories = Category.find({});
-  res.render("admin/categories/index", { categories });
+router.get("/", async (req, res) => {
+  try {
+    const categories = await Category.find({});
+    res.render("admin/categories/index", { categories });
+  } catch (err) {
+    res.status(400).send("could not find the categories");
+  }
 });
 
 router.post("/create", async (req, res) => {
@@ -18,9 +22,38 @@ router.post("/create", async (req, res) => {
   });
   try {
     await newCategory.save();
-    res.render("admin/categories/index");
+    res.render("admin/categories");
   } catch (err) {
     res.status(400).send("could not save the category");
+  }
+});
+
+router.get("/edit/:id", async (req, res) => {
+  try {
+    const category = await Category.find({ _id: req.params.id });
+    res.render("admin/categories/edit", { category });
+  } catch (err) {
+    res.status(400).send("could not find the category");
+  }
+});
+
+router.put("/edit/:id", async (req, res) => {
+  try {
+    const updatedCategory = await Category.findByIdAndUpdate(
+      req.params.id,
+      { name: req.body.name },
+      { new: true }
+    );
+
+    if (!updatedCategory) {
+      return res.status(404).send("Category not found");
+    }
+
+    req.flash("success", "Category updated successfully");
+    res.redirect("/admin/categories");
+  } catch (err) {
+    req.flash("error", "Failed to update category");
+    res.redirect(`/admin/categories/edit/${req.params.id}`);
   }
 });
 
