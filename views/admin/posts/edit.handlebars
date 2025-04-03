@@ -56,6 +56,16 @@
                 {{/select}}
               </select>
             </div>
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select name="category" id="category">
+                  {{#select post.category}}
+                    {{#each categories}}
+                    <option value="{{name}}">{{name}}</option>
+                    {{/each}}
+                  {{/select}}
+              </select>
+            </div>
             <div class="row mb-3">
               <div class="com-md-6 form-group">
                 <label for="file">image</label>

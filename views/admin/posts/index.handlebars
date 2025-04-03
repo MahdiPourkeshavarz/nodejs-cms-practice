@@ -30,6 +30,7 @@
                   <th>File</th>
                   <th>Title</th>
                   <th>Status</th>
+                  <th>Category</th>
                   <th>Date</th>
                   <th>Comments</th>
                   <th>Actions</th>
@@ -60,6 +61,7 @@
                       </span>
                     </td>
                       {{#if this.date}}
+                      <td><span>{{#if this.category}}</span></td>
                     <td>
                       <span>{{dateConverter this.date 'MMMM Do YYYY'}}</span>
                     </td>
