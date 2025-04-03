@@ -57,4 +57,15 @@ router.put("/edit/:id", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    await Category.findByIdAndDelete(id);
+    res.redirect("/admin/categories");
+  } catch (err) {
+    res.status(401).send("could not delete the requested category");
+  }
+});
+
 module.exports = router;
