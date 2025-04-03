@@ -4,6 +4,8 @@ const Post = require("../../models/Post");
 const Category = require("../../models/Category");
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
 router.all("/*", (req, res, next) => {
   req.app.locals.layout = "home";
@@ -33,6 +35,17 @@ router.get("/posts/:id", async (req, res) => {
 
 router.get("/login", (req, res) => {
   res.render("home/login");
+});
+
+passport.use(new LocalStrategy());
+
+router.post("/login", (req, res) => {
+  passport.Authenticator("local", {
+    successRedirect: "/home",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })(req, res, next);
+  res.render("home/index");
 });
 
 router.get("/register", (req, res) => {

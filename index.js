@@ -11,6 +11,7 @@ const flash = require("connect-flash");
 const moment = require("moment");
 mongoose.Promise = global.Promise;
 
+const { mongoDbUrl } = require("./config/database.js");
 const homeRoutes = require("./routes/homeRoutes/index.js");
 const adminRoutes = require("./routes/adminRoutes/index.js");
 const posts = require("./routes/adminRoutes/posts.js");
@@ -53,7 +54,7 @@ app.use((req, res, next) => {
 });
 
 mongoose
-  .connect("mongodb://localhost:27017/cms")
+  .connect(mongoDbUrl)
   .then((db) => {
     console.log("connected");
   })
