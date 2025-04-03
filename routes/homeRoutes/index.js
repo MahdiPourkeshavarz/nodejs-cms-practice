@@ -54,7 +54,7 @@ router.post("/register", async (req, res) => {
     errors.push({ message: "Passwords do not match" });
 
   if (errors.length > 0) {
-    return res.render("home/register", {
+    return res.render("/home/register", {
       errors,
       firstName,
       lastName,
