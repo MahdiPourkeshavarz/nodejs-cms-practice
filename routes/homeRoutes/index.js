@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../../models/Post");
 const Category = require("../../models/Category");
+const User = require("../../models/User");
+const bcrypt = require("bcryptjs");
 
 router.all("/*", (req, res, next) => {
   req.app.locals.layout = "home";
@@ -35,6 +37,61 @@ router.get("/login", (req, res) => {
 
 router.get("/register", (req, res) => {
   res.render("home/register");
+});
+
+router.post("/register", async (req, res) => {
+  const { firstName, lastName, email, password, passwordConfirm } = req.body;
+
+  let errors = [];
+
+  if (!firstName) errors.push({ message: "First name is required" });
+  if (!lastName) errors.push({ message: "Last name is required" });
+  if (!email) errors.push({ message: "Email is required" });
+  if (!password) errors.push({ message: "Password is required" });
+  if (password.length < 6)
+    errors.push({ message: "Password should be at least 6 characters" });
+  if (password !== passwordConfirm)
+    errors.push({ message: "Passwords do not match" });
+
+  if (errors.length > 0) {
+    return res.render("home/register", {
+      errors,
+      firstName,
+      lastName,
+      email,
+    });
+  }
+
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      errors.push({ message: "Email already registered" });
+      return res.render("/home/register", {
+        errors,
+        firstName,
+        lastName,
+        email,
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
+
+    req.flash("success-message", "Registration successful! Please log in");
+    res.redirect("/home/login");
+  } catch (err) {
+    console.error("Registration Error:", err);
+    req.flash("error-message", "Registration failed. Please try again");
+    res.redirect("/home/register");
+  }
 });
 
 module.exports = router;
