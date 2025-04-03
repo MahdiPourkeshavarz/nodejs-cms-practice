@@ -18,7 +18,7 @@ router.get("/create", (req, res) => {
 });
 
 router.post("/create", async (req, res) => {
-  const { title, status, allowComments = false, body } = req.body;
+  const { title, status, allowComments = false, body, category } = req.body;
 
   let errors = [];
 
@@ -67,6 +67,7 @@ router.post("/create", async (req, res) => {
     allowComments: Boolean(allowComments),
     body,
     file: fileName,
+    category,
   });
 
   try {
@@ -101,6 +102,7 @@ router.get("/edit/:id", async (req, res) => {
 router.put("/edit/:id", async (req, res) => {
   let file;
   let fileName = "not uploaded";
+  const id = req.params.id;
   if (IsFileUploaded(req.files)) {
     file = req.files?.file;
     fileName = `${Date.now()}-${file.name}`;
@@ -112,15 +114,16 @@ router.put("/edit/:id", async (req, res) => {
     console.log("file not uploaded");
   }
   try {
-    const { title, status, allowComments, body } = req.body;
+    const { title, status, allowComments, body, category } = req.body;
     const updatedPost = await Post.findByIdAndUpdate(
-      req.params.id,
+      id,
       {
         title,
         status,
         allowComments: allowComments === "on",
         body,
         file: fileName,
+        category,
       },
       { new: true }
     );

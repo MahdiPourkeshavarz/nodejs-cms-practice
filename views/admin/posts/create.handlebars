@@ -28,6 +28,14 @@
           <option value="draft">draft</option>
         </select>
       </div>
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select name="category" id="category" class="form-control">
+          {{#each categories}}
+            <option value="{{name}}">{{name}}</option>
+          {{/each}}
+        </select>
+      </div>
       <div class="form-check">
         <label for="allowComment">Allow Comments</label>
         <input
