@@ -2,8 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../../models/Post.js");
 const faker = require("faker");
+const { userAuthenticated } = require("../../utils/authentication.js");
 
-router.all("/*", (req, res, next) => {
+router.all("/*", userAuthenticated, (req, res, next) => {
   req.app.locals.layout = "admin";
   next();
 });
@@ -14,6 +15,11 @@ router.get("/", (req, res) => {
 
 router.get("/dashboard", (req, res) => {
   res.render("admin/dashboard");
+});
+
+router.get("/logout", (req, res) => {
+  req.logOut();
+  res.redirect("/home/index");
 });
 
 router.post("/generate-fake-post", async (req, res) => {

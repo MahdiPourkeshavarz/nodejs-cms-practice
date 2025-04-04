@@ -37,7 +37,28 @@ router.get("/login", (req, res) => {
   res.render("home/login");
 });
 
-passport.use(new LocalStrategy());
+passport.use(
+  new LocalStrategy(
+    { usernameField: "email" },
+    async (email, password, done) => {
+      try {
+        const user = await User.findOne({ email });
+        if (!user) {
+          return done(null, false, { message: "No user with that email" });
+        }
+
+        const isMatch = await user.isPasswordValid(password);
+        if (isMatch) {
+          return done(null, user);
+        } else {
+          return done(null, false, { message: "Incorrect password" });
+        }
+      } catch (err) {
+        return done(err);
+      }
+    }
+  )
+);
 
 router.post("/login", (req, res) => {
   passport.Authenticator("local", {
@@ -46,6 +67,21 @@ router.post("/login", (req, res) => {
     failureFlash: true,
   })(req, res, next);
   res.render("home/index");
+});
+
+router.get("/logout", (req, res) => {
+  req.logOut();
+  res.redirect("home/index");
+});
+
+passport.serializeUser(function (user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+  User.findById(id, function (err, user) {
+    done(err, user);
+  });
 });
 
 router.get("/register", (req, res) => {

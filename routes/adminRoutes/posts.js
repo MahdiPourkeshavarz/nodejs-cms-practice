@@ -4,7 +4,9 @@ const fs = require("fs");
 const path = require("path");
 const Post = require("../../models/Post.js");
 const { IsFileUploaded, uploadDir } = require("../../utils/index.js");
-router.all("/*", (req, res, next) => {
+const { userAuthenticated } = require("../../utils/authentication.js");
+
+router.all("/*", userAuthenticated, (req, res, next) => {
   req.app.locals.layout = "admin";
   next();
 });

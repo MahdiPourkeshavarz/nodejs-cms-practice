@@ -9,6 +9,7 @@ const app = express();
 const session = require("express-session");
 const flash = require("connect-flash");
 const moment = require("moment");
+const passport = require("passport");
 mongoose.Promise = global.Promise;
 
 const { mongoDbUrl } = require("./config/database.js");
@@ -45,11 +46,16 @@ app.use(
   })
 );
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(flash());
 
 app.use((req, res, next) => {
+  res.locals.user = req.user || "";
   res.locals.successMessage = req.flash("success-message");
   res.locals.errorMessage = req.flash("error-message");
+  res.locals.error = req.flash("error");
   next();
 });
 

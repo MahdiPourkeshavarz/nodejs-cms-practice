@@ -170,6 +170,10 @@
             <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
               <i class="fa fa-fw fa-sign-out"></i>Logout</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" >
+              <i class="fa fa-user"></i>{{#if user}}{{user.firstName}}{{/if}}</a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -233,7 +237,7 @@
                 type="button"
                 data-dismiss="modal"
               >Cancel</button>
-              <a class="btn btn-primary" href="login.html">Logout</a>
+              <a class="btn btn-primary" href="/home/index">Logout</a>
             </div>
           </div>
         </div>
