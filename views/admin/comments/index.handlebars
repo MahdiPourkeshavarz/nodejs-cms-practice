@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Comments</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .comment-card {
+            transition: all 0.3s ease;
+        }
+        .comment-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .comment-actions {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .comment-card:hover .comment-actions {
+            opacity: 1;
+        }
+        .comment-body {
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="row mb-4">
+            <div class="col">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="bi bi-chat-square-text me-2"></i>Comments Management</h2>
+                    <span class="badge bg-primary rounded-pill">{{comments.length}} comments</span>
+                </div>
+                <hr>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <!-- Search and Filter -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <form action="/admin/comments" method="GET">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Search comments..." value="{{searchQuery}}">
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-md-end gap-2">
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown">
+                                            <i class="bi bi-funnel me-1"></i>
+                                            {{#if filter}}Filter: {{filter}}{{else}}All Comments{{/if}}
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="/admin/comments">All Comments</a></li>
+                                            <li><a class="dropdown-item" href="/admin/comments?filter=recent">Recent First</a></li>
+                                            <li><a class="dropdown-item" href="/admin/comments?filter=oldest">Oldest First</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comments List -->
+                {{#if comments.length}}
+                    <div class="row row-cols-1 g-4">
+                        {{#each comments}}
+                        <div class="col">
+                            <div class="card comment-card shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <div>
+                                            <h5 class="card-title mb-1">
+                                                {{#if this.user}}
+                                                    <a href="/admin/users/{{this.user._id}}" class="text-decoration-none">
+                                                        {{this.user.firstName}} {{this.user.lastName}}
+                                                    </a>
+                                                {{else}}
+                                                    <span class="text-muted">[Deleted User]</span>
+                                                {{/if}}
+                                            </h5>
+                                            <small class="text-muted">
+                                                <i class="bi bi-clock me-1"></i>
+                                                {{formatDate this.createdAt 'MMMM D, YYYY [at] h:mm a'}}
+                                            </small>
+                                        </div>
+                                        <div class="comment-actions">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="/posts/{{this.post._id}}" class="btn btn-outline-primary" title="View Post">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal"
+                                                    data-bs-target="#deleteModal-{{this._id}}" title="Delete Comment">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="comment-body">{{this.body}}</div>
+                                    {{#if this.post}}
+                                    <div class="mt-3 pt-2 border-top">
+                                        <small class="text-muted">
+                                            <i class="bi bi-file-post me-1"></i>
+                                            On: <a href="/posts/{{this.post._id}}">{{this.post.title}}</a>
+                                        </small>
+                                    </div>
+                                    {{/if}}
+                                </div>
+                            </div>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" id="deleteModal-{{this._id}}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title">Confirm Deletion</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to delete this comment?</p>
+                                            <blockquote class="blockquote bg-light p-3 rounded">
+                                                <p class="mb-0">{{this.body}}</p>
+                                                <footer class="blockquote-footer mt-2">
+                                                    {{#if this.user}}
+                                                        {{this.user.firstName}} {{this.user.lastName}}
+                                                    {{else}}
+                                                        [Deleted User]
+                                                    {{/if}}
+                                                </footer>
+                                            </blockquote>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form action="/admin/comments/{{this._id}}?_method=DELETE" method="POST">
+                                                <button type="submit" class="btn btn-danger">Delete Comment</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+
+                    <!-- Pagination -->
+                    {{#if pagination}}
+                    <nav aria-label="Comments pagination" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {{#if pagination.prev}}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{pagination.prev}}{{#if searchQuery}}&search={{searchQuery}}{{/if}}{{#if filter}}&filter={{filter}}{{/if}}">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                            {{/if}}
+
+                            {{#each pagination.pages}}
+                            <li class="page-item {{#if active}}active{{/if}}">
+                                <a class="page-link" href="?page={{number}}{{#if ../searchQuery}}&search={{../searchQuery}}{{/if}}{{#if ../filter}}&filter={{../filter}}{{/if}}">
+                                    {{number}}
+                                </a>
+                            </li>
+                            {{/each}}
+
+                            {{#if pagination.next}}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{pagination.next}}{{#if searchQuery}}&search={{searchQuery}}{{/if}}{{#if filter}}&filter={{filter}}{{/if}}">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            {{/if}}
+                        </ul>
+                    </nav>
+                    {{/if}}
+                {{else}}
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="bi bi-chat-square-text display-5 text-muted mb-3"></i>
+                            <h3 class="text-muted">No Comments Found</h3>
+                            <p class="text-muted">There are no comments to display at this time.</p>
+                        </div>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
