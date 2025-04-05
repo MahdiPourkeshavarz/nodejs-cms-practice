@@ -109,9 +109,9 @@
                                 <h5 class="mb-0">Add a Comment</h5>
                             </div>
                             <div class="card-body">
-                                <form action="/posts/comment/{{post._id}}" method="POST">
+                                <form action="/admin/comments/{{post._id}}" method="POST">
                                     <div class="mb-3">
-                                        <textarea class="form-control" name="commentBody" rows="3" placeholder="Write your comment here..." required></textarea>
+                                        <textarea class="form-control" name="body" rows="3" placeholder="Write your comment here..." required></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Submit Comment</button>
                                 </form>

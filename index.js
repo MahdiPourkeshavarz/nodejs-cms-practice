@@ -17,6 +17,7 @@ const homeRoutes = require("./routes/homeRoutes/index.js");
 const adminRoutes = require("./routes/adminRoutes/index.js");
 const posts = require("./routes/adminRoutes/posts.js");
 const categories = require("./routes/adminRoutes/categories.js");
+const comments = require("./models/Comment.js");
 
 app.use(upload());
 
