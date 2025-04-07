@@ -142,10 +142,15 @@ router.put("/edit/:id", async (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const deletePost = await Post.fineOne({ _id: id });
+    const deletePost = await Post.fineOne({ _id: id }).populate("comments");
     fs.unlink(uploadDir + deletePost.file, (err) => {
       console.log(err);
     });
+    if (deletePost.comments) {
+      deletePost.comments.forEach(async (comment) => {
+        await comment.remove();
+      });
+    }
     await deletePost.remove();
     req.flash("success-message", "post deleted");
     res.redirect("/admin/posts");

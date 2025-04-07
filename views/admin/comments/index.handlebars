@@ -85,7 +85,7 @@
                                         <div>
                                             <h5 class="card-title mb-1">
                                                 {{#if this.user}}
-                                                    <a href="/admin/users/{{this.user._id}}" class="text-decoration-none">
+                                                    <a href="/admin/users/{{this.user.id}}" class="text-decoration-none">
                                                         {{this.user.firstName}} {{this.user.lastName}}
                                                     </a>
                                                 {{else}}
@@ -94,7 +94,7 @@
                                             </h5>
                                             <small class="text-muted">
                                                 <i class="bi bi-clock me-1"></i>
-                                                {{formatDate this.createdAt 'MMMM D, YYYY [at] h:mm a'}}
+                                                {{dateConverter this.date 'MMMM D, YYYY [at] h:mm a'}}
                                             </small>
                                         </div>
                                         <div class="comment-actions">
@@ -122,7 +122,7 @@
                             </div>
 
                             <!-- Delete Confirmation Modal -->
-                            <div class="modal fade" id="deleteModal-{{this._id}}" tabindex="-1">
+                            <div class="modal fade" id="deleteModal-{{this.id}}" tabindex="-1">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header bg-danger text-white">
@@ -144,7 +144,7 @@
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                            <form action="/admin/comments/{{this._id}}?_method=DELETE" method="POST">
+                                            <form action="/admin/comments/{{this.id}}?_method=DELETE" method="POST">
                                                 <button type="submit" class="btn btn-danger">Delete Comment</button>
                                             </form>
                                         </div>

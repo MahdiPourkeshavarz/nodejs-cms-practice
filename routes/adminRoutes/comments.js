@@ -40,10 +40,32 @@ router.post("/:id", async (req, res) => {
 router.get("/", async (req, res) => {
   let comments;
   try {
-    comments = await Comment.find({});
+    comments = await Comment.find({ user: req.user.id }).populate("user");
     res.render("admin/comments", { comments });
   } catch (err) {
     res.status(404).send("no comments found");
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const deletedComment = await Comment.findByIdAndDelete(id);
+    if (!deletedComment) {
+      return res.status(404).send("Comment not found");
+    }
+
+    const updatedPost = await Post.findOneAndUpdate(
+      { comments: id },
+      { $pull: { comments: id } },
+      { new: true }
+    );
+
+    if (updatedPost) return res.redirect("/admin/comments");
+  } catch (err) {
+    console.error("Error deleting comment:", err);
+    res.status(500).send("Could not delete comment");
   }
 });
 

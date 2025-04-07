@@ -70,7 +70,7 @@
                 </div>
 
                 <!-- Action Buttons -->
-                {{#if (isAuthor post.user._id)}}
+                {{#if post.user.id}}
                     <div class="d-flex gap-2 mb-5">
                         <a href="/posts/edit/{{post._id}}" class="btn btn-primary">Edit Post</a>
                         <form action="/posts/delete/{{post._id}}?_method=DELETE" method="POST">
@@ -90,10 +90,10 @@
                                 {{#each post.comments}}
                                     <div class="mb-3 pb-3 border-bottom">
                                         <div class="d-flex justify-content-between">
-                                            <strong>{{this.user.username}}</strong>
-                                            <small class="text-muted">{{formatDate this.date 'MMMM Do YYYY, h:mm a'}}</small>
+                                            <strong>{{this.user.firstName}}</strong>
+                                            <small class="text-muted">{{dateConverter this.date 'MMMM Do YYYY, h:mm a'}}</small>
                                         </div>
-                                        <p class="mb-0 mt-1">{{this.commentBody}}</p>
+                                        <p class="mb-0 mt-1">{{this.body}}</p>
                                     </div>
                                 {{/each}}
                             {{else}}
@@ -103,7 +103,7 @@
                     </div>
 
                     <!-- Add Comment Form -->
-                    {{#if user}}
+                    {{#if post.allowComments}}
                         <div class="card">
                             <div class="card-header">
                                 <h5 class="mb-0">Add a Comment</h5>
