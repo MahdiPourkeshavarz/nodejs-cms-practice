@@ -21,6 +21,7 @@ router.get("/create", (req, res) => {
 
 router.post("/create", async (req, res) => {
   const { title, status, allowComments = false, body, category } = req.body;
+  const { id: userId } = req.user;
 
   let errors = [];
 
@@ -64,6 +65,7 @@ router.post("/create", async (req, res) => {
   }
 
   const newPost = new Post({
+    userId,
     title,
     status,
     allowComments: Boolean(allowComments),
@@ -117,9 +119,11 @@ router.put("/edit/:id", async (req, res) => {
   }
   try {
     const { title, status, allowComments, body, category } = req.body;
+    const { id: userId } = req.user;
     const updatedPost = await Post.findByIdAndUpdate(
       id,
       {
+        userId,
         title,
         status,
         allowComments: allowComments === "on",
@@ -157,6 +161,18 @@ router.delete("/delete/:id", async (req, res) => {
   } catch (error) {
     console.error(err);
     res.status(500).send("Error deleting post");
+  }
+});
+
+router.get("/myPosts", async (req, res) => {
+  try {
+    const posts = await Post.find({ user: req.user._id })
+      .populate("category")
+      .sort({ date: -1 });
+    res.render("admin/posts/myPosts", { posts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error", { message: "Failed to load your posts" });
   }
 });
 

@@ -45,7 +45,7 @@
                         height="70"
                         class="img-responsive"
                       /></td>
-                    <td>{{this.title}}</td>
+                    <td><a href="/post/{{this.id}}" >{{this.title}}</a></td>
                     <td>
                       <span class="status-{{this.status}}">
                         {{#if (eq this.status "public")}}
@@ -81,7 +81,7 @@
                     </td>
                     <td class="action-btns">
                       <a
-                        href="/admin/posts/edit/{{this._id}}"
+                        href="/admin/posts/edit/{{this.id}}"
                         class="btn btn-sm btn-outline-primary"
                       >
                         <i class="fas fa-edit"></i>
@@ -89,7 +89,7 @@
                       </a>
                       <button
                         class="btn btn-sm btn-outline-danger delete-post"
-                        data-id="{{this._id}}"
+                        data-id="{{this.id}}"
                       >
                         <i class="fas fa-trash"></i>
                         Delete

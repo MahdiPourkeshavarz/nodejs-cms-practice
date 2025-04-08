@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Posts</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .post-card {
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .post-status {
+            font-size: 0.8rem;
+        }
+        .post-image {
+            height: 200px;
+            object-fit: cover;
+        }
+        .empty-state {
+            min-height: 60vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="h3 mb-0">
+                        <i class="bi bi-file-earmark-post me-2"></i>My Posts
+                    </h1>
+                    <a href="/admin/posts/create" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>New Post
+                    </a>
+                </div>
+                <hr>
+            </div>
+        </div>
+
+        {{#if posts.length}}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {{#each posts}}
+                <div class="col">
+                    <div class="card post-card shadow-sm">
+                        {{#if this.file}}
+                        <img src="/uploads/{{this.file}}" class="card-img-top post-image" alt="{{this.title}}">
+                        {{/if}}
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-{{#if (eq this.status 'public')}}success{{else}}warning text-dark{{/if}} post-status">
+                                    {{this.status}}
+                                </span>
+                                <small class="text-muted">{{formatDate this.date 'MMM D, YYYY'}}</small>
+                            </div>
+                            <h5 class="card-title">{{this.title}}</h5>
+                            <p class="card-text text-muted">{{truncate this.body 100}}</p>
+                            {{#if this.category}}
+                            <span class="badge bg-secondary mb-3">
+                                {{this.category.name}}
+                            </span>
+                            {{/if}}
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <div class="d-flex justify-content-between">
+                                <a href="/posts/{{this._id}}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye me-1"></i>View
+                                </a>
+                                <div class="btn-group">
+                                    <a href="/admin/posts/edit/{{this._id}}" class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal-{{this._id}}">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Confirmation Modal -->
+                    <div class="modal fade" id="deleteModal-{{this._id}}" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-danger text-white">
+                                    <h5 class="modal-title">Confirm Deletion</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this post?</p>
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        This action cannot be undone!
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <form action="/admin/posts/{{this._id}}?_method=DELETE" method="POST">
+                                        <button type="submit" class="btn btn-danger">Delete Post</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        {{else}}
+            <div class="empty-state d-flex align-items-center justify-content-center">
+                <div class="text-center py-5">
+                    <i class="bi bi-file-earmark-post display-1 text-muted mb-4"></i>
+                    <h3 class="text-muted">No Posts Yet</h3>
+                    <p class="text-muted mb-4">You haven't created any posts. Get started by creating your first post!</p>
+                    <a href="/admin/posts/create" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-lg me-2"></i>Create Your First Post
+                    </a>
+                </div>
+            </div>
+        {{/if}}
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

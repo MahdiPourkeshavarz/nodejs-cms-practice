@@ -25,10 +25,12 @@ router.get("/", async (req, res) => {
 router.get("/posts/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const post = await Post.findOne({ _id: id }).populate({
-      path: "comments",
-      populate: { path: "user", model: "users" },
-    });
+    const post = await Post.findOne({ _id: id })
+      .populate({
+        path: "comments",
+        populate: { path: "user", model: "users" },
+      })
+      .populate("user");
     const categories = await Category.find({});
     res.render("home/post", { post, categories });
   } catch (error) {
