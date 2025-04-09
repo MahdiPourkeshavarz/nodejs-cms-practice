@@ -92,6 +92,7 @@
                                                     <span class="text-muted">[Deleted User]</span>
                                                 {{/if}}
                                             </h5>
+                                            <input type="checkbox" name="approveComment" data-id="{{this.id}}" {{#if approvedComment}} checked {{/if}}>
                                             <small class="text-muted">
                                                 <i class="bi bi-clock me-1"></i>
                                                 {{dateConverter this.date 'MMMM D, YYYY [at] h:mm a'}}
@@ -200,5 +201,26 @@
 
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      $("[name='approveComment']").bootstrapSwitch();
+      $(document).ready(()=> {
+        $("[name='approveComment']").on('switchChange.bootstrapSwitch', (e, data) => {
+          const id = $(this).attr('data-id');
+          const approveComment = data;
+          $.ajax({
+            type: 'POST',
+            url: '/admin/comments/approveComment',
+            data: {
+              id,
+              approveComment,
+            },
+            cache: false,
+            success: function(dataa) {
+              toastr.success(`record${dataa._id} updated!`)
+            }
+          })
+        })
+      })
+    </script>
 </body>
 </html>

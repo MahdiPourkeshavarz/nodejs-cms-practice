@@ -135,7 +135,7 @@ router.put("/edit/:id", async (req, res) => {
     );
     if (updatedPost) {
       res.status(200).send("post updated!");
-      res.redirect("/admin/posts");
+      res.redirect("/admin/myPosts");
     }
   } catch (err) {
     console.error(err);
@@ -157,7 +157,7 @@ router.delete("/delete/:id", async (req, res) => {
     }
     await deletePost.remove();
     req.flash("success-message", "post deleted");
-    res.redirect("/admin/posts");
+    res.redirect("/admin/myPosts");
   } catch (error) {
     console.error(err);
     res.status(500).send("Error deleting post");

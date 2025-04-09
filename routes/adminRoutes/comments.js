@@ -69,4 +69,17 @@ router.delete("/delete/:id", async (req, res) => {
   }
 });
 
+router.post("/approveComment", async (req, res) => {
+  const id = req.body.id;
+  try {
+    const result = await Comment.findByIdAndUpdate(id, {
+      $set: { approvedComment: req.body.approvedComment },
+    });
+    res.send(result);
+  } catch (err) {
+    console.error("Error approving comment comment:", err);
+    res.status(500).send("Could not approve comment");
+  }
+});
+
 module.exports = router;

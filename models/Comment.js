@@ -10,6 +10,11 @@ const CommentSchema = new mongoose.Schema({
     required: true,
     minlength: 5,
   },
+  approvedComment: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   date: {
     type: Date,
     default: Date.now(),

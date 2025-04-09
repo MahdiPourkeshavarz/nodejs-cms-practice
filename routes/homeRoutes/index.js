@@ -22,12 +22,13 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/posts/:id", async (req, res) => {
-  const id = req.params.id;
+router.get("/posts/:slug", async (req, res) => {
+  const slug = req.params.slug;
   try {
-    const post = await Post.findOne({ _id: id })
+    const post = await Post.findOne({ slug })
       .populate({
         path: "comments",
+        match: { approvedComment: true },
         populate: { path: "user", model: "users" },
       })
       .populate("user");

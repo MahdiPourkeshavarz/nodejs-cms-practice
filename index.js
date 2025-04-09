@@ -11,7 +11,7 @@ const flash = require("connect-flash");
 const moment = require("moment");
 const passport = require("passport");
 mongoose.Promise = global.Promise;
-
+const toastr = require("toastr");
 const { mongoDbUrl } = require("./config/database.js");
 const homeRoutes = require("./routes/homeRoutes/index.js");
 const adminRoutes = require("./routes/adminRoutes/index.js");
