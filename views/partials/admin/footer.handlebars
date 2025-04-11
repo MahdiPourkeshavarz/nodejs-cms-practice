@@ -3,3 +3,10 @@
     <p class="m-0 text-center text-white">Copyright &copy; Your Website 2025</p>
   </div>
 </footer>
+
+<script>
+  import Chart from 'chart.js/auto' (async function() { const data = [ {year:
+  'posts', count: {{postCount}}} ]; new Chart( document.getElementById('myChart'), {
+  type: 'bar', data: { labels: data.map(row => row.year), datasets: [ { label:
+  'Acquisitions by year', data: data.map(row => row.count) } ] } } ); })();
+</script>

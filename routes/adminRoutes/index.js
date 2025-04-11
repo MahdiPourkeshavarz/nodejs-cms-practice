@@ -9,8 +9,14 @@ router.all("/*", userAuthenticated, (req, res, next) => {
   next();
 });
 
-router.get("/", (req, res) => {
-  res.render("admin/index");
+router.get("/", async (req, res) => {
+  try {
+    const postCount = await Post.count({});
+    res.render("admin/index", { postCount });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating post");
+  }
 });
 
 router.get("/dashboard", (req, res) => {
